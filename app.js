@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 const cors = require('cors');
 
 const app = express();
@@ -25,6 +26,9 @@ app.use(bodyParser.json());
 const auth = require('./routes/api/v1/auth');
 const bucketlists = require('./routes/api/v1/bucketlists');
 
+// Passport middleware
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 // Home Page
 app.get('/', (req, res) => {
