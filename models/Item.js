@@ -4,14 +4,11 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const BucketlistSchema = new Schema({
+// Create Schema for items
+const ItemSchema = new Schema({
   name: {
     type: String,
     required: true
-  },
-  items: {
-    type: Array,
-    ref: 'items'
   },
   date_created: {
     type: Date,
@@ -21,11 +18,15 @@ const BucketlistSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  created_by: {
+  done: {
+    type: Boolean,
+    default: false
+  },
+  bucket_list: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'users'
+    ref: 'bucketlists'
   },
 });
 
-const Bucketlist = mongoose.model('Bucketlist', BucketlistSchema);
-module.exports = Bucketlist;
+const Item = mongoose.model('Item', ItemSchema);
+module.exports = Item;
