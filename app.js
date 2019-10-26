@@ -4,6 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const app = express();
 
@@ -32,12 +34,16 @@ require('./config/passport')(passport);
 
 // Home Page
 app.get('/', (req, res) => {
-  res.send('BucketList API');
+  res.send('BucketList API by Gharoro Pureheart.');
 });
+
+// API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Use Routes
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/bucketlists', bucketlists);
+
 
 const port = process.env.PORT || 3500;
 app.listen(port, () => console.log(`App running on port ${port}`));

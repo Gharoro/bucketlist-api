@@ -31,7 +31,7 @@ router.put('/:id', data.none(), passport.authenticate('jwt', { session: false })
 // @route   DELETE /bucketlists/<id>
 // @desc    Delete this single bucket list
 // @access  Private
-router.delete('/:id', passport.authenticate('jwt', { session: false }), bucketlistController.delete_bucketlist);
+router.delete('/:bucket_id', passport.authenticate('jwt', { session: false }), bucketlistController.delete_bucketlist);
 
 // @route   POST /bucketlists/<id>/items
 // @desc    POST Create a new item in bucket list
@@ -56,7 +56,7 @@ router.put('/:id/items/:item_id', data.none(), passport.authenticate('jwt', { se
 // @route   DELETE /bucketlists/<id>/items/<item_id>
 // @desc    Delete a single item in a bucket list
 // @access  Private
-router.delete('/:id/items/:item_id', passport.authenticate('jwt', { session: false }), bucketlistController.delete_item);
+router.delete('/:bucket_id/items/:item_id', passport.authenticate('jwt', { session: false }), bucketlistController.delete_item);
 
 
 module.exports = router;

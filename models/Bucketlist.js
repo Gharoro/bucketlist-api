@@ -7,7 +7,8 @@ const { Schema } = mongoose;
 const BucketlistSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    index: true
   },
   items: {
     type: Array,
@@ -27,5 +28,7 @@ const BucketlistSchema = new Schema({
   },
 });
 
+BucketlistSchema.index({ name: 'text' });
 const Bucketlist = mongoose.model('Bucketlist', BucketlistSchema);
+
 module.exports = Bucketlist;
