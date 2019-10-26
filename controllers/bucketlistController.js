@@ -46,27 +46,38 @@ exports.list_all_bucketlists = (req, res) => {
   query.limit = limit;
   query.sort = { date_created: -1 };
   if (q) {
-    Bucketlist.find(
-      { $text: { $search: q } },
-      { __v: 0 },
-      query,
-    ).then((bucketlist) => {
-      if (bucketlist.length > 0) {
-        res.status(200).json({
-          status: 200,
-          message: `Bucketlists with ${q} in their name`,
-          buckelists: bucketlist,
-        });
-      } else {
-        res.status(404).json({
-          status: 404,
-          error: 'No bucket list match',
-        });
+    Bucketlist.countDocuments({}, (err, totalCount) => {
+      if (err) {
+        return res.status(400).json({ status: 400, error: 'An unexpected error occured' });
       }
-    }).catch(() => res.status(500).json({
-      status: 500,
-      error: 'Unable to process request',
-    }));
+      const totalPages = Math.ceil(totalCount / limit);
+      Bucketlist.find(
+        { $text: { $search: q } },
+        { __v: 0 },
+        query,
+      ).then((bucketlist) => {
+        if (bucketlist.length > 0) {
+          res.status(200).json({
+            status: 200,
+            message: `Bucketlists with ${q} in their name`,
+            pagination: {
+              result: bucketlist.length,
+              page_num: page,
+              total_pages: totalPages,
+            },
+            buckelists: bucketlist,
+          });
+        } else {
+          res.status(404).json({
+            status: 404,
+            error: 'No bucket list match',
+          });
+        }
+      }).catch(() => res.status(500).json({
+        status: 500,
+        error: 'Unable to process request',
+      }));
+    }).catch(() => res.status(400).json({ status: 400, error: 'An error occured' }));
   } else {
     Bucketlist.countDocuments({}, (err, totalCount) => {
       if (err) {
