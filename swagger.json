@@ -1,0 +1,525 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "BucketList API Documentation",
+    "description": "A Restful API for a bucket list service.",
+    "version": "1.0.0"
+  },
+  "host": "pureheart-bucketlist-api.herokuapp.com",
+  "basePath": "/api/v1",
+  "schemes": ["https"],
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Bucketlist"
+    },
+    {
+      "name": "Items"
+    }
+  ],
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "The user id."
+        },
+        "name": {
+          "type": "string",
+          "description": "The user name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user email."
+        },
+        "password": {
+          "type": "string",
+          "description": "The user password."
+        },
+        "date_created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The user registration date."
+        },
+        "logged_in": {
+          "type": "boolean",
+          "description": "The user login status."
+        }
+      }
+    },
+    "Bucketlist": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "The bucketlist Id."
+        },
+        "name": {
+          "type": "string",
+          "description": "The bucketlist name."
+        },
+        "items": {
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "description": "The bucketlist items."
+        },
+        "date_created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "date_modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "description": "The id of the user who created the bucketlist."
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "in": "Headers",
+      "name": "Authorization"
+    }
+  },
+  "responses": {
+    "UnauthorizedError": {
+      "description": "API token is missing or expired. Please login again.",
+      "headers": {
+        "Authorization": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "description": "Registers a new user.",
+        "tags": ["Auth"],
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "email",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "confirm_password",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Login a user.",
+        "tags": ["Auth"],
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "email",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "description": "Logs out a user.",
+        "tags": ["Auth"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/bucketlists": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "View all bucketlists.",
+        "tags": ["Bucketlist"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Bucketlist name to search for",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number to display e.g 2",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Total number of results to display. Default is 20, maximum is 100",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Bucketlist"
+            }
+          }
+        }
+      }
+    },
+    "/bucketlists/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "View a single bucketlist matching the id.",
+        "tags": ["Bucketlist"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "5da1b7fc6c649900174252ea",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Bucketlist"
+            }
+          }
+        }
+      }
+    },
+    "/bucketlists/": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Creates a new bucketlist.",
+        "tags": ["Bucketlist"],
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Bucketlist"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/bucketlists/{id}/items/": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Creates a new bucketlist.",
+        "tags": ["Items"],
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Bucketlist Id e.g, 5da1b7fc6c649900174252ea",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Bucketlist"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/bucketlists/{id}/items": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "List all the created items in a bucket list.",
+        "tags": ["Items"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Bucketlist"
+            }
+          }
+        }
+      }
+    },
+    "/bucketlists/{id}/items/{item_id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "View a single item in a bucketlist.",
+        "tags": ["Items"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Bucketlist id e.g, 5da1b7fc6c649900174252ea",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "description": "Item id e.g, 5da1b7fc6c649900174252ea",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Bucketlist"
+            }
+          }
+        }
+      }
+    },
+    "/bucketlists/{id}/": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Updates a bucketlist.",
+        "tags": ["Bucketlist"],
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "5da25a1d0fa5bf00171f96d2",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/bucketlists/{id}/items/{item_id}/": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Updates an item in a bucketlist.",
+        "tags": ["Items"],
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Bucketlist id e.g, 5da25a1d0fa5bf00171f96d2",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "description": "Item id e.g, 5da25a1d0fa5bf00171f96d2",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/bucketlists/{bucket_id}/": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Deletes a bucketlist.",
+        "tags": ["Bucketlist"],
+        "parameters": [
+          {
+            "name": "bucket_id",
+            "in": "path",
+            "description": "5da25a1d0fa5bf00171f96d2",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/bucketlists/{bucket_id}/items/{item_id}": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Deletes an item in bucketlist.",
+        "tags": ["Items"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Bucketlist id e.g, 5da25a1d0fa5bf00171f96d2",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "description": "Item id e.g, 5da25a1d0fa5bf00171f96d2",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}
